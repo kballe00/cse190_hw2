@@ -1,4 +1,4 @@
-function weights = randomlyInitWeights( numOutConnections, numInConnections )
+function weights = randomlyInitWeights( numInConnections, numOutConnections )
 %RANDOMLYINITWEIGHTS Randomly initialize the weights of a layer with
 %numInConnections incoming connections and numOutCounnections outgoing connections
 %   weights = RANDOMLYINITWEIGHTS(numInConnections, numOutConnections) randomly
