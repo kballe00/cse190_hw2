@@ -22,75 +22,64 @@ secondLayerWeights = reshape( weights( ( 1 + ( hiddenLayerSize * ( inputLayerSiz
     + 1 ) ) ) : end ), outputLayerSize, ( hiddenLayerSize + 1 ) );
 
 % Intialize variables
-numberOfFeatures = size( X, 1 );
-          
+numTrainingExamples = size( X, 1 );
+
 J = 0;
 
 % Add bias to input
-X = [ ones( numberOfFeatures, 1 ) X ];
+X = [ ones( numTrainingExamples, 1 ) X ];
 
 bigDelta2 = zeros( outputLayerSize, hiddenLayerSize + 1);
 bigDelta1 = zeros( hiddenLayerSize, inputLayerSize + 1 );
 
-% Iterate over every feature, and compute error
-for i = 1 : numberOfFeatures
+% Iterate over every training example, and compute the error
+for i = 1 : numTrainingExamples
     layerOneOutput = X( i, : ).';
     layerTwoInput = firstLayerWeights * X( i, : ).';
     layerTwoOutput =  [ 1; sigmoid( layerTwoInput ) ];
-    classifierUnitInput = ( layerTwoOutput.' * secondLayerWeights.' ).';
+    classifierUnitInput = ( secondLayerWeights * layerTwoOutput );
     
     % Create vector to represent what the output should be
     expectedOutput = zeros( outputLayerSize, 1 );
     % Set the node that should have the highest probability to 1
     correctAnswer = y( i );
     expectedOutput( correctAnswer ) = 1;    
-    
-    prediction = softmaxActivation( classifierUnitInput );
+
+    prediction = softmaxActivation( classifierUnitInput.' ).';
     
     % Calculate the cost/error
     J = J - sum( expectedOutput .* log( prediction ) - ( 1 -  expectedOutput ...
         ) .* log( 1 - prediction ) );   
         
     littleDelta3 = prediction - expectedOutput;
-    % THIS PART NEEDS TO BE FIXED - IT CURRENTLY USES K-WAY CLASSIFCATION
-    % BUT NEEDS TO IMPLEMENT SOFTMAX
-%     for k = 1 : outputLayerSize
-%         yForClass = ( y == k );
-%         prediction = softmaxActivation( classifierUnitInput );
-%         
-%         J = J - sum( expectedOutput .* log( prediction ) - ( 1 -  expectedOutput ...
-%             ) .* log( 1 - prediction ) );
-%         
-%         littleDelta3( k ) = prediction - yForClass( i );
-%     end
     
     % Compute error for the second layer, based on the output layer error
     littleDelta2 = ( secondLayerWeights.' * littleDelta3 ) .* ...
         layerTwoOutput .* ( 1 - layerTwoOutput );
-    
+  
     % Accumulate error over training examples
     bigDelta2 = bigDelta2 + littleDelta3 * layerTwoOutput.';
     bigDelta1 = bigDelta1 + littleDelta2( 2 : end ) * layerOneOutput.';
 end
 
 % Overall cost needs to be divided by number of features
-J = J / numberOfFeatures;
+J = J / numTrainingExamples;
 
 tempFLW = firstLayerWeights( :, 2 : end );
 tempSLW = secondLayerWeights( :, 2 : end );
 
 % Normalize J
-J = J + sum( ( lambda / ( 2 * numberOfFeatures ) ) * ( tempFLW(:) ...
-    .^ 2 ) ) + sum( ( lambda / ( 2 * numberOfFeatures ) ) * ...
+J = J + sum( ( lambda / ( 2 * numTrainingExamples ) ) * ( tempFLW(:) ...
+    .^ 2 ) ) + sum( ( lambda / ( 2 * numTrainingExamples ) ) * ...
     ( tempSLW(:) .^ 2 ) );
 
-% Overall gradients needs to be divided by number of features, and
+% Overall gradients needs to be divided by number of training examples, and
 % regularization also needs to be added (skip the first column, since it 
 % represents the bias)
 gradientFLW = ( bigDelta1 + lambda * [ zeros( size( bigDelta1, 1 ), 1 ) ...
-    firstLayerWeights( :, 2 : end ) ] ) / numberOfFeatures;
+    firstLayerWeights( :, 2 : end ) ] ) / numTrainingExamples;
 gradientSLW = ( bigDelta2 + lambda * [ zeros( size( bigDelta2, 1 ), 1 ) ...
-    secondLayerWeights( :, 2 : end ) ] ) / numberOfFeatures;
+    secondLayerWeights( :, 2 : end ) ] ) / numTrainingExamples;
 
 % Unroll gradients
 gradient = [ gradientFLW(:) ; gradientSLW(:) ];
