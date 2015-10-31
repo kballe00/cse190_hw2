@@ -12,7 +12,7 @@ numTrainingCases = size( trainingData, 1 );
 trainingData = [ ones( numTrainingCases, 1 ) trainingData ];
 hiddenLayerOutput = sigmoid( trainingData * firstLayerWeights.' );
 % Add bias to hidden layer output
-hiddenLayerOutput = [ ones( trainingData, 1 ) hiddenLayerOutput ];
+hiddenLayerOutput = [ ones( numTrainingCases, 1 ) hiddenLayerOutput ];
 output = softmaxActivation( hiddenLayerOutput * secondLayerWeights.' );
 
 [ ~, predictions ] = max( output, [ ], 2 );
