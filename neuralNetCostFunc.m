@@ -62,7 +62,7 @@ for i = 1 : numTrainingExamples
     bigDelta1 = bigDelta1 + littleDelta2( 2 : end ) * layerOneOutput.';
 end
 
-% Overall cost needs to be divided by number of features
+% Overall cost needs to be divided by number of training examples
 J = J / numTrainingExamples;
 
 tempFLW = firstLayerWeights( :, 2 : end );
@@ -82,5 +82,5 @@ gradientSLW = ( bigDelta2 + lambda * [ zeros( size( bigDelta2, 1 ), 1 ) ...
     secondLayerWeights( :, 2 : end ) ] ) / numTrainingExamples;
 
 % Unroll gradients
-gradient = [ gradientFLW(:) ; gradientSLW(:) ];
+gradient = [ gradientFLW( : ); gradientSLW( : ) ];
 end
