@@ -7,18 +7,18 @@ function numericalGradient = computeNumericalGradient( costFunction, weights )
 
 % Initialize variables
 numericalGradient = zeros( size( weights ) );
-epislonVector = zeros( size( weights ) );
+epsilonVector = zeros( size( weights ) );
 epislon = 1e-4;
 
-for i = 1 : numel( theta )
+for i = 1 : numel( weights )
     % Set appropiate index in epsilonVector
-    epislonVector( i ) = epislon;
+    epsilonVector( i ) = epislon;
     loss1 = costFunction( weights - epsilonVector );
-    loss2 = costFunction( weights + epislonVector );
+    loss2 = costFunction( weights + epsilonVector );
     
     % Compute the numerical gradient
     numericalGradient( i ) = ( loss2 - loss1 ) / ( 2 * epislon );
-    epislonVector( i ) = 0;
+    epsilonVector( i ) = 0;
 end
 
 end
