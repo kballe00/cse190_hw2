@@ -48,8 +48,7 @@ for i = 1 : numTrainingExamples
     prediction = softmaxActivation( classifierUnitInput.' ).';
     
     % Calculate the cost/error
-    J = J - sum( expectedOutput .* log( prediction ) - ( 1 -  expectedOutput ...
-        ) .* log( 1 - prediction ) );   
+    J = J - log( prediction( correctAnswer ) );   
         
     littleDelta3 = prediction - expectedOutput;
     
